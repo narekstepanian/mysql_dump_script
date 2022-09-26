@@ -13,7 +13,7 @@ VALIDATION_ERROR=false
 #usage
 function usage {
         echo	 "Usage:
-        		 -u [ USERNAME ]                            Database username.
+        		 -u 		                            Database username.
         		 -p                                         Databases user's password.
         		 -h [DB HOSTNAME,default LOCALHOST]         Databases hostname(address).
         		 -d [DB NAME]                               Database name.
@@ -88,10 +88,15 @@ fi
 
 #if username is empty
 
-#if [ -z "$USERNAME" ]; then
-#    echo "User has not been specified" >&2
-#    VALIDATION_ERROR=true
-#fi
+if [[ -z "$DATABASE" ]]; then
+    echo "Darabase has not been specified" >&2
+    VALIDATION_ERROR=true
+fi
+
+if [[ $HOST == "127.0.0.1" ]]; then
+echo "connecting to local Database"
+fi
+
 
 #Actions
 
