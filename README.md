@@ -20,8 +20,8 @@ This is a simple bash script for backup and restore mysql database
 - Backup all databases
 - compress backup file 
 - restore database
-- import database
-**Make sure that you have installed mysql_client , bzip ,gzip ***
+- import database <br>
+**Make sure that you have installed mysql_client , bzip ,gzip**
 ## Example
 Backup and commpress database southwind
 > sudo ./mysql_dump -u -d southwind -b -c bzip -p
