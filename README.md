@@ -18,4 +18,4 @@ Usage: <br>
 
 > sudo ./mysql_dump -u -d southwind -b -c bzip -p
 
-ERROR CODES #error code 1 Invalid option #error code 2 no option #error code 3 empty argument
+## ERROR CODES <br> error code 1 Invalid option <br> error code 2 no option <br> error code 3 empty argument
