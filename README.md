@@ -26,7 +26,7 @@ This is a simple bash script for backup and restore mysql database
 
 ## Example
 Backup and commpress database southwind
-> sudo ./mysql_dump -u -d southwind -b -c bzip -p
+> sudo ./mysql_dump -u -d southwind -b -c bzip -p <br>
 Restore or input database
 > sudo ./mysql_dump -u -d southwind -i mysql-southwind.sql -p 
 ## ERROR CODES <br> 
