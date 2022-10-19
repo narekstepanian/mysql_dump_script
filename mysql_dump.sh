@@ -21,6 +21,7 @@ function usage {
         		 -a                                         Backup all Databases
 			 -b					    Action Backup
 			 -r					    Action Restore
+			 -s [Bucket name]	                    Put Backup to S3 Bucket
         		 -c                                         Compress
         		    bzip                                            with BZIP
         		    gzip                                            with GZIP"
@@ -28,7 +29,7 @@ function usage {
 }
 
 #arguments
-while getopts ":?uph:o:d:c:ai:b" opt; do
+while getopts ":?uph:o:d:c:ai:bs:" opt; do
     case $opt in
         u)
 	   for j in $(seq 1 3);do
@@ -66,6 +67,22 @@ while getopts ":?uph:o:d:c:ai:b" opt; do
             ;;
         b)
             ACTION="BACKUP"
+            ;;
+        s)
+	    BUCKET_NAME=$OPTARG
+	   echo -e "\nAWS CONFIGURATION"
+	   read -p "AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION:"  line
+           if [ -z "$line" ]; then
+                echo "AWS config has not been specified" >&2 
+           VALIDATION_ERROR=true
+           else
+           VALIDATION_ERROR=false
+           export AWS_ACCESS_KEY_ID=$(echo $line |  awk -F "/"  '{ print $1 }') 
+           export AWS_SECRET_ACCESS_KEY=$(echo $line |  awk -F "/"  '{ print $2 }')
+           export AWS_DEFAULT_REGION=$(echo $line |  awk -F "/"  '{ print $3 }') 
+           echo -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\nAWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\nAWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+                break
+           fi
             ;;
         /?)
             echo "Invalid option: -$OPTARG" >&2
@@ -119,4 +136,10 @@ echo "done "
 
 fi
 
-find ${OUTPUTDIR}  -type f -mtime +30 -delete
+if $VALIDATION_ERROR || [[ -z "$BUCKET_NAME" ]] ; then
+  echo "no s3" 
+else 
+
+s3cmd put ${OUTPUTDIR}mysql-${DATABASE}-`date +%d%b%Y`.sql  s3://$BUCKET_NAME
+
+fi
