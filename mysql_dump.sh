@@ -20,8 +20,9 @@ function usage {
         		 -o [OUTPUT diroctory]                      Output Directory
         		 -a                                         Backup all Databases
 			 -b					    Action Backup
-			 -r					    Action Restore
+			 -i					    Action Restore
 			 -s [Bucket name]	                    Put Backup to S3 Bucket
+			 -r [Expire days]			    Action Remove Database from S3 Bucket
         		 -c                                         Compress
         		    bzip                                            with BZIP
         		    gzip                                            with GZIP"
@@ -29,7 +30,7 @@ function usage {
 }
 
 #arguments
-while getopts ":?uph:o:d:c:ai:bs:" opt; do
+while getopts ":?uph:o:d:c:i:bs:r:" opt; do
     case $opt in
         u)
 	   for j in $(seq 1 3);do
@@ -55,9 +56,6 @@ while getopts ":?uph:o:d:c:ai:bs:" opt; do
         d)
             DATABASE=$OPTARG
             ;;
-        a)
-            DATABASE="--all-databases"
-            ;;
         c)
             COM=$OPTARG
             ;;
@@ -65,12 +63,12 @@ while getopts ":?uph:o:d:c:ai:bs:" opt; do
 	    FILE_NAME=$OPTARG
             ACTION="RESTORE"
             ;;
-        b)
+	b)
             ACTION="BACKUP"
             ;;
         s)
 	    BUCKET_NAME=$OPTARG
-	   echo -e "\nAWS CONFIGURATION"
+	   echo -e "\nAWS CONFIGURATION."
 	   read -p "AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION:"  line
            if [ -z "$line" ]; then
                 echo "AWS config has not been specified" >&2 
@@ -81,8 +79,11 @@ while getopts ":?uph:o:d:c:ai:bs:" opt; do
            export AWS_SECRET_ACCESS_KEY=$(echo $line |  awk -F "/"  '{ print $2 }')
            export AWS_DEFAULT_REGION=$(echo $line |  awk -F "/"  '{ print $3 }') 
            echo -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\nAWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\nAWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-                break
            fi
+            ;;
+	 r)
+            DEL_DATE=$OPTARG
+            ACTION_S3="DELETE"
             ;;
         /?)
             echo "Invalid option: -$OPTARG" >&2
@@ -122,7 +123,6 @@ if $VALIDATION_ERROR || [[ -z "$ACTION" ]] ; then
 elif [[ $ACTION == "BACKUP" ]]; then
 mysqldump -u $USERNAME --databases $DATABASE --host  $HOST --password=$PASSWORD  >  ${OUTPUTDIR}mysql-${DATABASE}-`date +%d%b%Y`.sql
 else
-
 mysql -u $USERNAME  --password=$PASSWORD --database=$DATABASE < "${FILE_NAME}"
 fi
 
@@ -137,9 +137,31 @@ echo "done "
 fi
 
 if $VALIDATION_ERROR || [[ -z "$BUCKET_NAME" ]] ; then
-  echo "no s3" 
-else 
+  echo "no s3"
+else
 
 s3cmd put ${OUTPUTDIR}mysql-${DATABASE}-`date +%d%b%Y`.sql  s3://$BUCKET_NAME
 
+fi
+
+echo ${DEL_DATE}
+
+
+if [[ $ACTION_S3 == "DELETE" ]];
+then
+s3cmd ls s3://$BUCKET_NAME | while read -r line;
+  do
+    createDate=`echo $line|awk {'print $1" "$2'}`
+    createDate=`date -d"$createDate" +%s`
+    olderThan=`date -d"-$DEL_DATE" +%s`
+    if [[ $createDate -lt $olderThan ]]
+      then
+        fileName=`echo $line|awk '{ print $4 }'`
+        echo $fileName
+        if [[ $fileName != "" ]]
+          then
+            s3cmd del "$fileName"
+        fi
+    fi
+  done;
 fi
