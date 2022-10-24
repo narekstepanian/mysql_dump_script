@@ -41,7 +41,7 @@ Put Backup to S3 Bucket
 > sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] <br>
 
 Remove Backup from S3 Bucket
-> sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] -r 30days
+> sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] -r [Expire days] 
 
 **Please input credentials by this format** <br>
 AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION 
