@@ -44,7 +44,11 @@ Remove Backup from S3 Bucket
 > sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] -r [Expire days] 
 
 **Please input credentials by this format** <br>
-AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION 
+AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION  <br>
+
+for example` <br>
+
+1111111111111111111111111/22222222222222222222/eu-central-1
 
 ## ERROR CODES <br> 
 error code 1 Invalid option <br> 
