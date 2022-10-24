@@ -44,7 +44,7 @@ Remove Backup from S3 Bucket
 > sudo ./mysql_dump.sh -u -d southwind -b -p  -s lessonstests3 -r 30days
 
 **Please input credentials by this format** <br>
-AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION 
+AWS_ACCESS_KEY_ID**/**AWS_SECRET_ACCESS_KEY**/**AWS_DEFAULT_REGION 
 
 ## ERROR CODES <br> 
 error code 1 Invalid option <br> 
