@@ -31,17 +31,17 @@ Bash script for backup and restore mysql database
 
 ## Example
 Backup and commpress database southwind
-> sudo ./mysql_dump.sh -u -d southwind -b -c bzip -p <br>
+> sudo ./mysql_dump.sh -u -d [database name] -b -c bzip -p <br>
 
 Restore or input database
->sudo ./mysql_dump.sh -u -d southwind -i mysql-southwind.sql -p 
+>sudo ./mysql_dump.sh -u -d [database name] -i [input file name] -p 
 
 ### S3 Bucket
 Put Backup to S3 Bucket
-> sudo ./mysql_dump.sh -u -d southwind -b -p  -s lessonstests3 <br>
+> sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] <br>
 
 Remove Backup from S3 Bucket
-> sudo ./mysql_dump.sh -u -d southwind -b -p  -s lessonstests3 -r 30days
+> sudo ./mysql_dump.sh -u -d [database name] -b -p  -s [Bucket name] -r 30days
 
 **Please input credentials by this format** <br>
 AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION 
