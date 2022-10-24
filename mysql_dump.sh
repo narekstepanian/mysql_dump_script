@@ -32,7 +32,7 @@ function usage {
 #arguments
 while getopts ":?uph:o:d:c:i:bs:r:" opt; do
     case $opt in
-        u)
+        u) #USERNAME
 	   for j in $(seq 1 3);do
 	   read -p "USERNAME:" USERNAME
 	   if [ -z "$USERNAME" ]; then
@@ -44,53 +44,54 @@ while getopts ":?uph:o:d:c:i:bs:r:" opt; do
            fi
            done
            ;;
-        p)
+        p) #PASSWORD
 	    read -p "PASSWORD:"  -s PASSWORD
             ;;
-        h)
+        h) #HOST
             HOST=$OPTARG
             ;;
-        o)
+        o) #OUTPUTDIRECTORY
             OUTPUT_DIR= $OPTARG
             ;;
-        d)
+        d) #DATABASE_NAME
             DATABASE=$OPTARG
             ;;
-        c)
+        c) #COMPRESSION
             COM=$OPTARG
             ;;
-        i)
+        i) #RESTORE 
 	    FILE_NAME=$OPTARG
             ACTION="RESTORE"
             ;;
-	b)
+	b) #BACKUP
             ACTION="BACKUP"
             ;;
-        s)
-	    BUCKET_NAME=$OPTARG
+        s) #PUSH S3
+	   BUCKET_NAME=$OPTARG
+	   ACTION_S3_PUSH="PUSH"
 	   echo -e "\nAWS CONFIGURATION."
 	   read -p "AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION:"  line
            if [ -z "$line" ]; then
                 echo "AWS config has not been specified" >&2 
            VALIDATION_ERROR=true
            else
-           VALIDATION_ERROR=false
            export AWS_ACCESS_KEY_ID=$(echo $line |  awk -F "/"  '{ print $1 }') 
            export AWS_SECRET_ACCESS_KEY=$(echo $line |  awk -F "/"  '{ print $2 }')
            export AWS_DEFAULT_REGION=$(echo $line |  awk -F "/"  '{ print $3 }') 
-           echo -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID\nAWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY\nAWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
            fi
+
+
             ;;
-	 r)
+	 r) #REMOVE FROM S3
             DEL_DATE=$OPTARG
             ACTION_S3="DELETE"
             ;;
-        /?)
+        /?) #if input invalid option
             echo "Invalid option: -$OPTARG" >&2
             usage
             exit 1
             ;; 
-        :)
+        :) #if argument not specified 
             echo "Option -$OPTARG requires an argument." >&2
             exit 3
             ;;
@@ -136,20 +137,18 @@ echo "done "
 
 fi
 
-if $VALIDATION_ERROR || [[ -z "$BUCKET_NAME" ]] ; then
-  echo "no s3"
-else
+#S3 Bucket Actions
 
-s3cmd put ${OUTPUTDIR}mysql-${DATABASE}-`date +%d%b%Y`.sql  s3://$BUCKET_NAME
+if [[ ! -z "$BUCKET_NAME" ]] ; then
+
+aws s3 cp  ${OUTPUTDIR}mysql-${DATABASE}-`date +%d%b%Y`.sql  s3://$BUCKET_NAME
 
 fi
 
-echo ${DEL_DATE}
-
-
+#delete files from s3 older then
 if [[ $ACTION_S3 == "DELETE" ]];
 then
-s3cmd ls s3://$BUCKET_NAME | while read -r line;
+aws s3 ls s3://$BUCKET_NAME | while read -r line;
   do
     createDate=`echo $line|awk {'print $1" "$2'}`
     createDate=`date -d"$createDate" +%s`
@@ -160,7 +159,7 @@ s3cmd ls s3://$BUCKET_NAME | while read -r line;
         echo $fileName
         if [[ $fileName != "" ]]
           then
-            s3cmd del "$fileName"
+            aws s3 rm "s3://$BUCKET_NAME/$fileName"
         fi
     fi
   done;
