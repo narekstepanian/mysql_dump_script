@@ -27,7 +27,7 @@ Bash script for backup and restore mysql database
 - Backup Database to S3 Bucket
 - Set Bucket files expire date
 
-**Make sure that you have installed mysql_client , bzip ,gzip,s3cmd**
+**Make sure that you have installed mysql_client , bzip ,gzip,aws cli**
 
 ## Example
 Backup and commpress database southwind
