@@ -1,6 +1,6 @@
 # MySql Dumping simple script
 ## DESCRIPTION
-This is a simple script for backup and restore ( import ) database in mysql .<br>
+This is a simple script for backup and restore ( import ) database in mysql.<br>
 
 ## Usage 
 Usage: <br> 
@@ -27,7 +27,7 @@ Bash script for backup and restore mysql database
 - Backup Database to S3 Bucket
 - Set Bucket files expire date
 
-**Make sure that you have installed mysql_client , bzip ,gzip,aws cli.**
+**NOTE:Make sure that you have installed mysql_client , bzip ,gzip,aws cli.**
 
 ## Example
 Backup and commpress database southwind
@@ -51,6 +51,6 @@ for example <br>
 1111111111111111111111111/22222222222222222222/eu-central-1
 
 ## ERROR CODES <br> 
-error code 1:Invalid option <br> 
-error code 2:no option <br> 
-error code 3:empty argument
+error code 1: Invalid option <br> 
+error code 2: No option <br> 
+error code 3: Empty argument
