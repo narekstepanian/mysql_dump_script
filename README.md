@@ -18,7 +18,7 @@ Usage: <br>
 ## About Project
 This is a simple Training Project <br>
 Bash script for backup and restore mysql database 
-### Features`
+### Features:
 - Backup one Database
 - Backup all databases
 - compress backup file 
@@ -27,7 +27,7 @@ Bash script for backup and restore mysql database
 - Backup Database to S3 Bucket
 - Set Bucket files expire date
 
-**Make sure that you have installed mysql_client , bzip ,gzip,aws cli**
+**Make sure that you have installed mysql_client , bzip ,gzip,aws cli.**
 
 ## Example
 Backup and commpress database southwind
@@ -46,11 +46,11 @@ Remove Backup from S3 Bucket
 **Please input credentials by this format** <br>
 AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY/AWS_DEFAULT_REGION  <br>
 
-for example` <br>
+for example <br>
 
 1111111111111111111111111/22222222222222222222/eu-central-1
 
 ## ERROR CODES <br> 
-error code 1 Invalid option <br> 
-error code 2 no option <br> 
-error code 3 empty argument
+error code 1:Invalid option <br> 
+error code 2:no option <br> 
+error code 3:empty argument
